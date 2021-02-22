@@ -59,16 +59,16 @@ object Frame: SFrame() {
         val lE6 = SLabel(64, 1056, 600, 28, "Productos de re-clasificación: ${App.getCantidadProductos("RC")}")
 
         val lT = SLabel(32, 1120, 600, 32, "Tiempos:", WSFS)
-        val lT1 = SLabel(64, 1152, 600, 28, "Tiempo total requerido en operación 1: ${App.getTiemposOp1()}")
-        val lT2 = SLabel(64, 1184, 600, 28, "Tiempo total requerido en operación 2: ${App.getTiemposOp2()}")
-        val lT3 = SLabel(64, 1216, 600, 28, "Tiempo total requerido en muestra 1: ${App.getTiemposM1()}")
-        val lT4 = SLabel(64, 1248, 600, 28, "Tiempo total requerido en muestra 2: ${App.getTiemposM2()}")
-        val lT5 = SLabel(64, 1280, 600, 28, "Tiempo total requerido en taller: ${App.getTiemposT()}")
-        val lT6 = SLabel(64, 1312, 600, 28, "Tiempo promedio por producto en operación 1: ${App.getTiempoOp1()}")
-        val lT7 = SLabel(64, 1344, 600, 28, "Tiempo promedio por producto en operación 2: ${App.getTiempoOp2()}")
-        val lT8 = SLabel(64, 1376, 600, 28, "Tiempo promedio por producto en muestra 1: ${App.getTiempoM1()}")
-        val lT9 = SLabel(64, 1408, 600, 28, "Tiempo promedio por producto en muestra 2: ${App.getTiempoM2()}")
-        val lT10 = SLabel(64, 1440, 600, 28, "Tiempo promedio por producto en el taller: ${App.getTiempoT()}")
+        val lT1 = SLabel(64, 1152, 600, 28, "Tiempo total requerido en operación 1: ${App.getTiemposOp1()} minutos")
+        val lT2 = SLabel(64, 1184, 600, 28, "Tiempo total requerido en operación 2: ${App.getTiemposOp2()} minutos")
+        val lT3 = SLabel(64, 1216, 600, 28, "Tiempo total requerido en muestra 1: ${App.getTiemposM1()} minutos")
+        val lT4 = SLabel(64, 1248, 600, 28, "Tiempo total requerido en muestra 2: ${App.getTiemposM2()} minutos")
+        val lT5 = SLabel(64, 1280, 600, 28, "Tiempo total requerido en taller: ${App.getTiemposT()} minutos")
+        val lT6 = SLabel(64, 1312, 600, 28, "Tiempo promedio por producto en operación 1: ${App.getTiempoOp1()} minutos")
+        val lT7 = SLabel(64, 1344, 600, 28, "Tiempo promedio por producto en operación 2: ${App.getTiempoOp2()} minutos")
+        val lT8 = SLabel(64, 1376, 600, 28, "Tiempo promedio por producto en muestra 1: ${App.getTiempoM1()} minutos")
+        val lT9 = SLabel(64, 1408, 600, 28, "Tiempo promedio por producto en muestra 2: ${App.getTiempoM2()} minutos")
+        val lT10 = SLabel(64, 1440, 600, 28, "Tiempo promedio por producto en el taller: ${App.getTiempoT()} minutos")
 
         val lAR = SLabel(32, 1504, 600, 32, "Análisis de riesgo:", WSFS)
         val lCN = SLabel(64, 1536, 600, 28, "Capital necesario: ${App.getCapitalNecesario()}")
@@ -132,6 +132,7 @@ object Frame: SFrame() {
     }
 }
 
+//tiempo en muestras, en operaciones, total y promedios. costo por pbn
 object App {
     //parametros
     private var costoOp1 = 78.0 // $/min
@@ -153,6 +154,7 @@ object App {
     private var costoPBN = 0.0
     private var costoImpuestos = 0.0
 
+    private var tiemposMuestra1 = 0.0
     private var ingreso = 0.0
     private var clientes = 0
     private var satisfechos = 0
@@ -166,6 +168,7 @@ object App {
         this.eficienciaM2 = eficienciaM2
         this.cantidadProductos = cantidadProductos
         //inicializa contadores
+        tiemposMuestra1 = 0.0
         costoMuestra1 = 0.0
         costoReclamo = 0.0
         costoPBN = 0.0
@@ -217,6 +220,7 @@ object App {
             else if (producto.estado == "R") {
                 operacion1(producto)
             }
+            tiemposMuestra1 += 2.5 + Random.nextDouble()*(3.2-2.5)
             costoMuestra1 += costoM1
         }
     }
@@ -430,23 +434,39 @@ object App {
     }
 
     fun getTiemposOp1(): String {
-        return ""
+        var tiempo = 0.0
+        for (i in productos) {
+            tiempo += i.tiempoOp1
+        }
+        return "%.2f".format(tiempo)
     }
 
     fun getTiemposOp2(): String {
-        return ""
+        var tiempo = 0.0
+        for (i in productos) {
+            tiempo += i.tiempoOp2
+        }
+        return "%.2f".format(tiempo)
     }
 
     fun getTiemposM1(): String {
-        return ""
+        return "%.2f".format(tiemposMuestra1)
     }
 
     fun getTiemposM2(): String {
-        return ""
+        var tiempo = 0.0
+        for (i in productos) {
+            tiempo += i.tiempoM2
+        }
+        return "%.2f".format(tiempo)
     }
 
     fun getTiemposT(): String {
-        return ""
+        var tiempo = 0.0
+        for (i in productos) {
+            tiempo += i.tiempoT
+        }
+        return "%.2f".format(tiempo)
     }
 
     fun getTiempoOp1(): String {
@@ -478,7 +498,7 @@ object App {
     }
 
     private fun getPI(): Double {
-        return ingreso
+        return ingreso - getCV() - costoFijo
     }
 
     fun getPosIngresos(): String {

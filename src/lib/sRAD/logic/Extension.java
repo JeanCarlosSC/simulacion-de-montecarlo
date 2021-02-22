@@ -67,7 +67,7 @@ public class Extension {
             number = number.substring(1);
         }
 
-        String decimal =("%.2f".formatted(valor % 1)).substring(1);
+        String decimal =("%.2f".formatted(valor % 1)).substring(1 + ajusteModulo);
         str += decimal;
 
         return str;
