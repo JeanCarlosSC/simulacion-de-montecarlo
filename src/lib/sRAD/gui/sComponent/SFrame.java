@@ -20,6 +20,10 @@ public class SFrame extends JFrame {
      * @param type
      */
     public SFrame(int type) {
+        setProperties(type);
+    }
+
+    public void setProperties(int type) {
         if(type == ESTANDAR) {
             setProperties();
         }
