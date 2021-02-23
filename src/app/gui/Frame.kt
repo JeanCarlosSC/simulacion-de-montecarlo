@@ -1,10 +1,7 @@
 package app.gui
 
 import lib.sRAD.gui.component.Resource.WSFS
-import lib.sRAD.gui.sComponent.SFrame
-import lib.sRAD.gui.sComponent.SLabel
-import lib.sRAD.gui.sComponent.SPanel
-import lib.sRAD.gui.sComponent.SScrollPane
+import lib.sRAD.gui.sComponent.*
 import lib.sRAD.logic.Extension.toCOP
 import lib.sRAD.logic.Extension.toPTJ
 import kotlin.random.Random
@@ -15,6 +12,13 @@ object Frame: SFrame() {
     init {
         val scroll = SScrollPane(100, 60, 800, 620, pInformacion)
         add(scroll)
+
+        val btRecrear = SButton(932, 60, 100, 32, "RE-CREAR")
+        btRecrear.addActionListener {
+            App.simular(App.RECREAR)
+        }
+        add(btRecrear)
+
         setMainBar("Simulación de Monte Carlo")
         setProperties(ESTANDAR)
     }
@@ -139,7 +143,8 @@ object Frame: SFrame() {
 //tiempo en muestras, en operaciones, total y promedios. costo por pbn
 object App {
     //ajuste pre-establecido
-    public val DEFAULT = 0;
+    val DEFAULT = 0;
+    val RECREAR = 1;
 
     //parametros
     private var cantidadProductos = 0
@@ -208,8 +213,12 @@ object App {
     }
 
     fun simular(type: Int) {
-        if(type == DEFAULT)
+        if(type == DEFAULT) {
             simular()
+        }
+        else if(type == RECREAR) {
+            simular(cantidadProductos, eficienciaM1, eficienciaM2, costoOp1, costoOp2, costoM1, costoM2, costoTaller, costoFijo)
+        }
     }
 
     fun operacion1 (producto: Producto) {
