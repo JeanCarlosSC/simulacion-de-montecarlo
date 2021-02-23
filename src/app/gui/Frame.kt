@@ -1,6 +1,7 @@
 package app.gui
 
 import lib.sRAD.gui.component.Resource.WSFS
+import lib.sRAD.gui.component.VentanaEmergente
 import lib.sRAD.gui.sComponent.*
 import lib.sRAD.logic.Extension.toCOP
 import lib.sRAD.logic.Extension.toPTJ
@@ -19,8 +20,54 @@ object Frame: SFrame() {
         }
         add(btRecrear)
 
+        val btRiesgo = SButton(932, 92, 100, 32, "RIESGO")
+        btRiesgo.addActionListener {
+            var min: Double? = null
+            var max: Double? = null
+            var acumulado = 0.0
+            var cantidad = 0
+
+            for(i in 0 until 1000) {
+                App.simular(App.RECREAR)
+                val ingreso = App.getIngresosFinales()
+                if(min == null || ingreso < min) {
+                    min = ingreso
+                }
+                if(max == null || ingreso > max) {
+                    max = ingreso
+                }
+                acumulado += ingreso
+                cantidad++
+            }
+            val esperanza = acumulado/cantidad
+            mostrarRiesgo(min!!, max!!, esperanza)
+        }
+        add(btRiesgo)
+
         setMainBar("Simulación de Monte Carlo")
         setProperties(ESTANDAR)
+    }
+
+    fun mostrarRiesgo(min: Double, max: Double, media: Double) {
+        val ventanaEmergente = VentanaEmergente(this, 532, 270)
+
+        val lMensaje = SLabel(32, 32, 436, 28, "Después de replicar 1000 veces la simulación, tenemos:")
+        ventanaEmergente.add(lMensaje)
+
+        val lMin = SLabel(64, 64, 436, 28, "Ingreso después de impuestos mínimo: ${toCOP(min)}")
+        ventanaEmergente.add(lMin)
+
+        val lMax = SLabel(64, 96, 436, 28, "Ingreso después de impuestos máximo: ${toCOP(max)}")
+        ventanaEmergente.add(lMax)
+
+        val lMed = SLabel(64, 128, 436, 28, "Ingreso después de impuestos esperado: ${toCOP(media)}")
+        ventanaEmergente.add(lMed)
+
+        val btClose = SButton(200, 185, 100, 32, "CERRAR")
+        btClose.addActionListener { ventanaEmergente.cerrar() }
+        ventanaEmergente.add(btClose)
+
+        ventanaEmergente.lanzar()
     }
 
     fun actualizar() {
@@ -605,7 +652,11 @@ object App {
     }
 
     fun getPosIngresos(): String {
-        return toCOP(getPI() - costoImpuestos)
+        return toCOP(getIngresosFinales())
+    }
+
+    fun getIngresosFinales(): Double {
+        return getPI() - costoImpuestos
     }
 
     fun getReclamos(): String {
