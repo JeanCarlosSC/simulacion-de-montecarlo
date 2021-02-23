@@ -3,8 +3,8 @@ package app.gui
 import lib.sRAD.gui.component.Resource.WSFS
 import lib.sRAD.gui.component.VentanaEmergente
 import lib.sRAD.gui.sComponent.*
-import lib.sRAD.logic.Extension.toCOP
-import lib.sRAD.logic.Extension.toPTJ
+import lib.sRAD.logic.Extension.*
+import javax.swing.JOptionPane
 import kotlin.random.Random
 
 object Frame: SFrame() {
@@ -44,6 +44,12 @@ object Frame: SFrame() {
         }
         add(btRiesgo)
 
+        val btAjuste = SButton(932, 124, 100, 32, "AJUSTAR")
+        btAjuste.addActionListener {
+            realizarAjuste()
+        }
+        add(btAjuste)
+
         setMainBar("Simulación de Monte Carlo")
         setProperties(ESTANDAR)
     }
@@ -66,6 +72,91 @@ object Frame: SFrame() {
         val btClose = SButton(200, 185, 100, 32, "CERRAR")
         btClose.addActionListener { ventanaEmergente.cerrar() }
         ventanaEmergente.add(btClose)
+
+        ventanaEmergente.lanzar()
+    }
+
+    fun realizarAjuste() {
+        val ventanaEmergente = VentanaEmergente(this, 500, 500)
+
+        val cantidadProductos = SLabel(150, 32, 300, 28, "Cantidad de productos.")
+        ventanaEmergente.add(cantidadProductos)
+
+        val tfCantidadProducto = STextField(32, 32, 100, 32, App.getCantidadProductos().toString())
+        ventanaEmergente.add(tfCantidadProducto)
+
+        val costoOp1 = SLabel(150, 72, 300, 28, "Costo de operación 1. ($/min)")
+        ventanaEmergente.add(costoOp1)
+
+        val tfCostoOp1 = STextField(32, 72, 100, 32, App.costoOp1.toString())
+        ventanaEmergente.add(tfCostoOp1)
+
+        val costoOp2 = SLabel(150, 112, 300, 28, "Costo de operación 2. ($/min)")
+        ventanaEmergente.add(costoOp2)
+
+        val tfCostoOp2 = STextField(32, 112, 100, 32, App.costoOp2.toString())
+        ventanaEmergente.add(tfCostoOp2)
+
+        val costoM1 = SLabel(150, 152, 300, 28, "Costo de muestra 1. ($/u)")
+        ventanaEmergente.add(costoM1)
+
+        val tfCostoM1 = STextField(32, 152, 100, 32, App.costoM1.toString())
+        ventanaEmergente.add(tfCostoM1)
+
+        val costoM2 = SLabel(150, 192, 300, 28, "Costo de muestra 2. ($/min)")
+        ventanaEmergente.add(costoM2)
+
+        val tfCostoM2 = STextField(32, 192, 100, 32, App.costoM2.toString())
+        ventanaEmergente.add(tfCostoM2)
+
+        val costoT = SLabel(150, 232, 300, 28, "Costo de taller. ($/min)")
+        ventanaEmergente.add(costoT)
+
+        val tfCostoT = STextField(32, 232, 100, 32, App.costoTaller.toString())
+        ventanaEmergente.add(tfCostoT)
+
+        val costoFijo = SLabel(150, 272, 300, 28, "Costo fijo.")
+        ventanaEmergente.add(costoFijo)
+
+        val tfCostoFijo = STextField(32, 272, 100, 32, App.costoFijo.toString())
+        ventanaEmergente.add(tfCostoFijo)
+
+        val inflacion = SLabel(150, 312, 300, 28, "Inflación.")
+        ventanaEmergente.add(inflacion)
+
+        val tfInflacion = STextField(32, 312, 100, 32, App.inflacion.toString())
+        ventanaEmergente.add(tfInflacion)
+
+        val eficienciaM1 = SLabel(150, 352, 300, 28, "Eficiencia de muestra 1.")
+        ventanaEmergente.add(eficienciaM1)
+
+        val tfEficienciaM1 = STextField(32, 352, 100, 32, App.eficienciaM1.toString())
+        ventanaEmergente.add(tfEficienciaM1)
+
+        val eficienciaM2 = SLabel(150, 392, 300, 28, "Eficiencia de muestra 2.")
+        ventanaEmergente.add(eficienciaM2)
+
+        val tfEficienciaM2 = STextField(32, 392, 100, 32, App.eficienciaM2.toString())
+        ventanaEmergente.add(tfEficienciaM2)
+
+        val btClose = SButton(100, 434, 100, 32, "CERRAR")
+        btClose.addActionListener { ventanaEmergente.cerrar() }
+        ventanaEmergente.add(btClose)
+
+        val btConfirm = SButton(232, 434, 100, 32, "ACEPTAR")
+        btConfirm.addActionListener {
+            if(isInt(tfCantidadProducto.text) && isDouble(tfCostoOp1.text) && isDouble(tfCostoOp2.text) && isDouble(tfCostoM1.text)
+                && isDouble(tfCostoM2.text) && isDouble(tfCostoT.text) && isDouble(tfInflacion.text) && isDouble(tfCostoFijo.text)
+                && isDouble(tfEficienciaM1.text) && isDouble(tfEficienciaM2.text)) {
+                App.simular(tfCantidadProducto.text.toInt(), tfEficienciaM1.text.toDouble(), tfEficienciaM2.text.toDouble(), tfCostoOp1.text.toDouble(),
+                    tfCostoOp2.text.toDouble(), tfCostoM1.text.toDouble(), tfCostoM2.text.toDouble(), tfCostoT.text.toDouble(), tfCostoFijo.text.toDouble())
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Por favor ingrese valores válidos", "Error", 0)
+            }
+            ventanaEmergente.cerrar()
+        }
+        ventanaEmergente.add(btConfirm)
 
         ventanaEmergente.lanzar()
     }
@@ -195,17 +286,17 @@ object App {
 
     //parametros
     private var cantidadProductos = 0
-    private var costoOp1 = 78.0 // $/min
-    private var costoOp2 = 82.0 // $/min
-    private var costoM1 = 7.0 // $/unidad
-    private var costoM2 = 7.0 // $/min
-    private var costoTaller = 53.0 // $/min
-    private var costoFijo = 0.0
+    var costoOp1 = 78.0 // $/min
+    var costoOp2 = 82.0 // $/min
+    var costoM1 = 7.0 // $/unidad
+    var costoM2 = 7.0 // $/min
+    var costoTaller = 53.0 // $/min
+    var costoFijo = 0.0
 
-    private var inflacion = 0.0
-    private var porcentajeImpuesto = 0.0
-    private var eficienciaM1 = 0.50
-    private var eficienciaM2 = 0.50
+    var inflacion = 0.0
+    var porcentajeImpuesto = 0.0
+    var eficienciaM1 = 0.50
+    var eficienciaM2 = 0.50
 
     //contadores
     private var costoMuestra1 = 0.0
