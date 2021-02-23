@@ -37,6 +37,7 @@ object Frame: SFrame() {
 
         val lDS = SLabel(32, 384, 600, 32, "Datos:", WSFS)
         val lCS = SLabel(64, 416, 600, 28, "Clientes satisfechos: ${App.getSatisfechos()} de ${App.getClientes()}")
+        val lCRE = SLabel(64, 448, 600, 28, "Cantidad de reclamos: ${App.getReclamos()}")
 
         val lC = SLabel(32, 480, 600, 32, "Costos:", WSFS)
         val lCPBN = SLabel(64, 512, 600, 28, "Costos por pérdida del buen nombre: ${App.getCostosPBN()}")
@@ -57,6 +58,7 @@ object Frame: SFrame() {
         val lE4 = SLabel(64, 992, 600, 28, "Productos que requieren re-proceso 2: ${App.getCantidadProductos("R2")}")
         val lE5 = SLabel(64, 1024, 600, 28, "Productos que requieren reparación: ${App.getCantidadProductos("RP")}")
         val lE6 = SLabel(64, 1056, 600, 28, "Productos de re-clasificación: ${App.getCantidadProductos("RC")}")
+        val lE7 = SLabel(64, 1088, 600, 28, "Productos de pre-venta: ${App.getCantidadProductos("PV")}")
 
         val lT = SLabel(32, 1120, 600, 32, "Tiempos:", WSFS)
         val lT1 = SLabel(64, 1152, 600, 28, "Tiempo total requerido en operación 1: ${App.getTiemposOp1()} minutos")
@@ -89,6 +91,7 @@ object Frame: SFrame() {
 
         pInformacion.add(lDS)
         pInformacion.add(lCS)
+        pInformacion.add(lCRE)
 
         pInformacion.add(lC)
         pInformacion.add(lCPBN)
@@ -109,6 +112,7 @@ object Frame: SFrame() {
         pInformacion.add(lE4)
         pInformacion.add(lE5)
         pInformacion.add(lE6)
+        pInformacion.add(lE7)
 
         pInformacion.add(lT)
         pInformacion.add(lT1)
@@ -134,13 +138,17 @@ object Frame: SFrame() {
 
 //tiempo en muestras, en operaciones, total y promedios. costo por pbn
 object App {
+    //ajuste pre-establecido
+    public val DEFAULT = 0;
+
     //parametros
+    private var cantidadProductos = 0
     private var costoOp1 = 78.0 // $/min
     private var costoOp2 = 82.0 // $/min
     private var costoM1 = 7.0 // $/unidad
-    private var costoM2 = 78.0 // $/min
-    private var costoTaller =53.0 // $/min
-    private var cantidadProductos = 0
+    private var costoM2 = 7.0 // $/min
+    private var costoTaller = 53.0 // $/min
+    private var costoFijo = 0.0
 
     private var inflacion = 0.0
     private var porcentajeImpuesto = 0.0
@@ -150,7 +158,6 @@ object App {
     //contadores
     private var costoMuestra1 = 0.0
     private var costoReclamo = 0.0
-    private var costoFijo = 0.0
     private var costoPBN = 0.0
     private var costoImpuestos = 0.0
 
@@ -158,24 +165,37 @@ object App {
     private var ingreso = 0.0
     private var clientes = 0
     private var satisfechos = 0
+
     //productos
     private var productos = mutableListOf<Producto>()
 
     //importar el porcentaje de impuesto
-    fun simular (cantidadProductos: Int, eficienciaM1: Double, eficienciaM2: Double) {
+    fun simular (
+                cantidadProductos: Int = 1000, eficienciaM1: Double = 0.50, eficienciaM2: Double = 0.50, costoOp1: Double = 78.0,
+                costoOp2: Double = 82.2, costoM1: Double = 7.0, costoM2: Double = 7.0, costoTaller: Double = 53.0, costoFijo: Double = 500000.0
+            ) {
         //almacena valores
+        this.cantidadProductos = cantidadProductos
         this.eficienciaM1 = eficienciaM1
         this.eficienciaM2 = eficienciaM2
-        this.cantidadProductos = cantidadProductos
-        //inicializa contadores
-        tiemposMuestra1 = 0.0
+        this.costoOp1 = costoOp1
+        this.costoOp2 = costoOp2
+        this.costoM1 = costoM1
+        this.costoM2 = costoM2
+        this.costoFijo = costoFijo
+        this.costoTaller = costoTaller
+
+        //inicializa contadores y elimina los productos
         costoMuestra1 = 0.0
         costoReclamo = 0.0
         costoPBN = 0.0
+        costoImpuestos = 0.0
+        tiemposMuestra1 = 0.0
         ingreso = 0.0
         clientes = 0
         satisfechos = 0
         productos.clear()
+
         //inicia simulación
         for (i in 0 until cantidadProductos) {
             //crea el producto
@@ -185,6 +205,11 @@ object App {
         }
         //grafica
         Frame.actualizar()
+    }
+
+    fun simular(type: Int) {
+        if(type == DEFAULT)
+            simular()
     }
 
     fun operacion1 (producto: Producto) {
@@ -211,21 +236,25 @@ object App {
 
     fun muestra1 (producto: Producto) {
         if (Random.nextDouble() < 1 - eficienciaM1) {
+            //no muestrea
             operacion2(producto)
         }
         else {
-            if (producto.estado == "C") {
+            //muestrea
+            if (producto.estado == "PC") {
                 operacion2(producto)
             }
-            else if (producto.estado == "R") {
+            else if (producto.estado == "R1") {
                 operacion1(producto)
             }
+            //costo por muestreo
             tiemposMuestra1 += 2.5 + Random.nextDouble()*(3.2-2.5)
             costoMuestra1 += costoM1
         }
     }
 
     fun operacion2(producto: Producto) {
+        //establece estado
         if (producto.estado == "R2") {
             producto.estado = "PC"
         }
@@ -255,11 +284,14 @@ object App {
 
     fun muestra2 (producto: Producto) {
         if (Random.nextDouble() < 1 - eficienciaM2) {
+            //no muestrea
             producto.precio = 2800.0
             cliente(producto)
         }
         else {
+            //muestrea
             if (producto.estado == "D") {
+                producto.estado = "PV"
                 producto.precio = 9.0 //pre-venta
                 cliente(producto)
             }
@@ -270,6 +302,7 @@ object App {
             else if (producto.estado == "RP") {
                 //taller - calcula tiempos
                 producto.tiempoT += 5.2 + Random.nextDouble()*(7.3-5.2)
+                producto.estado = "PC"
                 producto.precio = 2800.0
                 cliente(producto)
             }
@@ -286,21 +319,34 @@ object App {
     }
 
     fun cliente (producto: Producto) {
-        //tambien afectar ingreso, e impuestos
+        //el cliente paga por el producto
+        ingreso += producto.precio
+
+        //y revisa decide si está conforme con lo que recibió .tambien afectar impuestos
         if (producto.estado == "D" && producto.precio > 9.0) {
-            if(Random.nextDouble() < 103.0/138.0) {
-                //reclama
-                costoReclamo += 60.0
-            }
-            else {
-                //no vuelve
-                costoPBN += 170.0
-            }
+            clienteInconforme()
+        }
+        else if (producto.estado == "R1" || producto.estado == "R2" || producto.estado == "RP") {
+            clienteInconforme()
+        }
+        else if (producto.estado == "RC" && producto.precio > 1800) {
+            clienteInconforme()
         }
         else {
             satisfechos ++
         }
         clientes ++
+    }
+
+    private fun clienteInconforme() {
+        if(Random.nextDouble() < 103.0/138.0) {
+            //reclama
+            costoReclamo += 60.0
+        }
+        else {
+            //no vuelve
+            costoPBN += 170.0
+        }
     }
 
     fun getCostoOp1(): String {
@@ -374,7 +420,7 @@ object App {
     }
 
     fun getCostosMuestra1(): String {
-        return toCOP(costoM1)
+        return toCOP(costoMuestra1)
     }
 
     fun getCostosOp1 (): String {
@@ -470,23 +516,71 @@ object App {
     }
 
     fun getTiempoOp1(): String {
-        return ""
+        var tiempo = 0.0
+        var cantidad = 0
+        for (i in productos) {
+            if(i.tiempoOp1 > 0) {
+                tiempo += i.tiempoOp1
+                cantidad ++
+            }
+        }
+        return if (cantidad != 0)
+            "%.2f".format(tiempo/cantidad)
+        else 
+            "NO APLICA"
     }
 
     fun getTiempoOp2(): String {
-        return ""
+        var tiempo = 0.0
+        var cantidad = 0
+        for (i in productos) {
+            if(i.tiempoOp2 > 0) {
+                tiempo += i.tiempoOp2
+                cantidad ++
+            }
+        }
+        return if (cantidad != 0)
+            "%.2f".format(tiempo/cantidad)
+        else 
+            "NO APLICA"
     }
 
     fun getTiempoM1(): String {
-        return ""
+        val cantidad = costoMuestra1/costoM1
+        return if (cantidad != 0.0)
+            "%.2f".format(tiemposMuestra1/(costoMuestra1/costoM1))
+        else
+            "NO APLICA"
     }
 
     fun getTiempoM2(): String {
-        return ""
+        var tiempo = 0.0
+        var cantidad = 0
+        for (i in productos) {
+            if(i.tiempoM2 > 0) {
+                tiempo += i.tiempoM2
+                cantidad ++
+            }
+        }
+        return if (cantidad != 0)
+            "%.2f".format(tiempo/cantidad)
+        else 
+            "NO APLICA"
     }
 
     fun getTiempoT(): String {
-        return ""
+        var tiempo = 0.0
+        var cantidad = 0
+        for (i in productos) {
+            if(i.tiempoT > 0) {
+                tiempo += i.tiempoT
+                cantidad ++
+            }
+        }
+        return if (cantidad != 0)
+            "%.2f".format(tiempo/cantidad)
+        else 
+            "NO APLICA"
     }
 
     fun getCapitalNecesario(): String {
@@ -504,6 +598,10 @@ object App {
     fun getPosIngresos(): String {
         return toCOP(getPI() - costoImpuestos)
     }
+
+    fun getReclamos(): String {
+        return (costoReclamo/60.0).toInt().toString()
+    }
 }
 
 class Producto {
@@ -514,6 +612,7 @@ class Producto {
      * R2 = Re-proceso en operacion 2.
      * RP = Reparacion.
      * RC = Re-clasificacion.
+     * PV = Pre-venta
      */
     var estado = ""
     var tiempoOp1 = 0.0
