@@ -535,7 +535,7 @@ object App {
         //el impuesto de la venta se debe sumar
         costoImpuestos += porcentajeImpuesto * producto.precio
 
-        //y revisa decide si está conforme con lo que recibió .tambien afectar impuestos
+        //el cliente decide si está conforme con lo que recibió
         if (producto.estado == "D" && producto.precio > 9.0) {
             clienteInconforme()
         }
