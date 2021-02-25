@@ -8,7 +8,7 @@ import javax.swing.JOptionPane
 import kotlin.random.Random
 
 object Frame: SFrame() {
-    private val pInformacion = SPanel(SPanel.INTERNO, 100, 60, 760, 1760)
+    private val pInformacion = SPanel(SPanel.INTERNO, 100, 60, 760, 1824)
 
     init {
         val scroll = SScrollPane(100, 60, 800, 620, pInformacion)
@@ -58,6 +58,10 @@ object Frame: SFrame() {
         }
         add(btEstocastico)
 
+        val btOptimizar = SButton(932, 188, 150, 32, "OPTIMIZAR")
+        btOptimizar.addActionListener { App.optimizar() }
+        add(btOptimizar)
+
         setMainBar("Simulación de Monte Carlo")
         setProperties(ESTANDAR)
     }
@@ -85,7 +89,7 @@ object Frame: SFrame() {
     }
 
     private fun realizarAjuste() { //coordenadas
-        val ventanaEmergente = VentanaEmergente(this, 500, 540)
+        val ventanaEmergente = VentanaEmergente(this, 500, 580)
 
         val cantidadProductos = SLabel(150, 32, 300, 28, "Cantidad de productos.")
         ventanaEmergente.add(cantidadProductos)
@@ -93,77 +97,77 @@ object Frame: SFrame() {
         val tfCantidadProducto = STextField(32, 32, 100, 32, App.getCantidadProductos().toString())
         ventanaEmergente.add(tfCantidadProducto)
 
-        val precioProducto = SLabel(150, 32, 300, 28, "Precio de venta de producto.")
+        val precioProducto = SLabel(150, 72, 300, 28, "Precio de venta de producto.")
         ventanaEmergente.add(precioProducto)
 
-        val tfPrecioProducto = STextField(32, 32, 100, 32, App.precioProducto.toString())
+        val tfPrecioProducto = STextField(32, 72, 100, 32, App.precioProducto.toString())
         ventanaEmergente.add(tfPrecioProducto)
 
-        val costoOp1 = SLabel(150, 72, 300, 28, "Costo de operación 1. ($/min)")
+        val costoOp1 = SLabel(150, 112, 300, 28, "Costo de operación 1. ($/min)")
         ventanaEmergente.add(costoOp1)
 
-        val tfCostoOp1 = STextField(32, 72, 100, 32, App.costoOp1.toString())
+        val tfCostoOp1 = STextField(32, 112, 100, 32, App.costoOp1.toString())
         ventanaEmergente.add(tfCostoOp1)
 
-        val costoOp2 = SLabel(150, 112, 300, 28, "Costo de operación 2. ($/min)")
+        val costoOp2 = SLabel(150, 152, 300, 28, "Costo de operación 2. ($/min)")
         ventanaEmergente.add(costoOp2)
 
-        val tfCostoOp2 = STextField(32, 112, 100, 32, App.costoOp2.toString())
+        val tfCostoOp2 = STextField(32, 152, 100, 32, App.costoOp2.toString())
         ventanaEmergente.add(tfCostoOp2)
 
-        val costoM1 = SLabel(150, 152, 300, 28, "Costo de muestra 1. ($/u)")
+        val costoM1 = SLabel(150, 192, 300, 28, "Costo de muestra 1. ($/u)")
         ventanaEmergente.add(costoM1)
 
-        val tfCostoM1 = STextField(32, 152, 100, 32, App.costoM1.toString())
+        val tfCostoM1 = STextField(32, 192, 100, 32, App.costoM1.toString())
         ventanaEmergente.add(tfCostoM1)
 
-        val costoM2 = SLabel(150, 192, 300, 28, "Costo de muestra 2. ($/min)")
+        val costoM2 = SLabel(150, 232, 300, 28, "Costo de muestra 2. ($/min)")
         ventanaEmergente.add(costoM2)
 
-        val tfCostoM2 = STextField(32, 192, 100, 32, App.costoM2.toString())
+        val tfCostoM2 = STextField(32, 232, 100, 32, App.costoM2.toString())
         ventanaEmergente.add(tfCostoM2)
 
-        val costoT = SLabel(150, 232, 300, 28, "Costo de taller. ($/min)")
+        val costoT = SLabel(150, 272, 300, 28, "Costo de taller. ($/min)")
         ventanaEmergente.add(costoT)
 
-        val tfCostoT = STextField(32, 232, 100, 32, App.costoTaller.toString())
+        val tfCostoT = STextField(32, 272, 100, 32, App.costoTaller.toString())
         ventanaEmergente.add(tfCostoT)
 
-        val costoFijo = SLabel(150, 272, 300, 28, "Costo fijo.")
+        val costoFijo = SLabel(150, 312, 300, 28, "Costo fijo.")
         ventanaEmergente.add(costoFijo)
 
-        val tfCostoFijo = STextField(32, 272, 100, 32, App.costoFijo.toString())
+        val tfCostoFijo = STextField(32, 312, 100, 32, App.costoFijo.toString())
         ventanaEmergente.add(tfCostoFijo)
 
-        val inflacion = SLabel(150, 312, 300, 28, "Inflación.")
+        val inflacion = SLabel(150, 352, 300, 28, "Inflación.")
         ventanaEmergente.add(inflacion)
 
-        val tfInflacion = STextField(32, 312, 100, 32, App.inflacion.toString())
+        val tfInflacion = STextField(32, 352, 100, 32, App.inflacion.toString())
         ventanaEmergente.add(tfInflacion)
 
-        val eficienciaM1 = SLabel(150, 352, 300, 28, "Eficiencia de muestra 1.")
+        val eficienciaM1 = SLabel(150, 392, 300, 28, "Eficiencia de muestra 1.")
         ventanaEmergente.add(eficienciaM1)
 
-        val tfEficienciaM1 = STextField(32, 352, 100, 32, App.eficienciaM1.toString())
+        val tfEficienciaM1 = STextField(32, 392, 100, 32, App.eficienciaM1.toString())
         ventanaEmergente.add(tfEficienciaM1)
 
-        val eficienciaM2 = SLabel(150, 392, 300, 28, "Eficiencia de muestra 2.")
+        val eficienciaM2 = SLabel(150, 432, 300, 28, "Eficiencia de muestra 2.")
         ventanaEmergente.add(eficienciaM2)
 
-        val tfEficienciaM2 = STextField(32, 392, 100, 32, App.eficienciaM2.toString())
+        val tfEficienciaM2 = STextField(32, 432, 100, 32, App.eficienciaM2.toString())
         ventanaEmergente.add(tfEficienciaM2)
 
-        val porcentajeImpuesto = SLabel(150, 432, 300, 28, "Eficiencia de muestra 2.")
+        val porcentajeImpuesto = SLabel(150, 472, 300, 28, "Porcentaje de impuestos.")
         ventanaEmergente.add(porcentajeImpuesto)
 
-        val tfPorcentajeImpuesto = STextField(32, 432, 100, 32, App.porcentajeImpuesto.toString())
+        val tfPorcentajeImpuesto = STextField(32, 472, 100, 32, App.porcentajeImpuesto.toString())
         ventanaEmergente.add(tfPorcentajeImpuesto)
 
-        val btClose = SButton(212, 484, 100, 32, "CERRAR")
+        val btClose = SButton(212, 524, 100, 32, "CERRAR")
         btClose.addActionListener { ventanaEmergente.cerrar() }
         ventanaEmergente.add(btClose)
 
-        val btConfirm = SButton(70, 484, 100, 32, "ACEPTAR")
+        val btConfirm = SButton(70, 524, 100, 32, "ACEPTAR")
         btConfirm.addActionListener {
             if( isInt(tfCantidadProducto.text) && isDouble(tfCostoOp1.text) && isDouble(tfCostoOp2.text) && isDouble(tfCostoM1.text)
                 && isDouble(tfCostoM2.text) && isDouble(tfCostoT.text) && isDouble(tfInflacion.text) && isDouble(tfCostoFijo.text)
@@ -180,7 +184,7 @@ object Frame: SFrame() {
         }
         ventanaEmergente.add(btConfirm)
 
-        val btDefault = SButton(354, 484, 100, 32, "DEFAULT")
+        val btDefault = SButton(354, 524, 100, 32, "DEFAULT")
         btDefault.addActionListener {
             tfCantidadProducto.text = "1000"
             tfPrecioProducto.text = "2800.0"
@@ -207,60 +211,60 @@ object Frame: SFrame() {
         //carga la información
         val lVD = SLabel(32, 32, 600, 32, "Parámetros:", WSFS)
         val lCP = SLabel(64, 64, 600, 28, "Cantidad de productos: ${App.getCantidadProductos()}")
-        val lPP = SLabel(64, 192, 600, 28, "Precio de venta de producto conforme: ${App.getPrecioProducto()}")
-        val lCCO1 = SLabel(64, 96, 600, 28, "Costo de operación 1: ${App.getCostoOp1()} por minuto")
-        val lCCO2 = SLabel(64, 128, 600, 28, "Costo de operación 2: ${App.getCostoOp2()} por minuto")
-        val lCCM1 = SLabel(64, 160, 600, 28, "Costo de muestra 1: ${App.getCostoM1()} por unidad")
-        val lCCM2 = SLabel(64, 192, 600, 28, "Costo de muestra 2: ${App.getCostoM2()} por minuto")
-        val lCTA = SLabel(64, 192, 600, 28, "Costo de taller: ${App.getCostoT()} por minuto")
-        val lCF = SLabel(64, 704, 600, 28, "Costos fijos: ${App.getCostosFijo()}")
-        val lEM1 = SLabel(64, 224, 600, 28, "Eficiencia de muestra 1: ${App.getEficienciaM1()}")
-        val lEM2 = SLabel(64, 256, 600, 28, "Eficiencia de muestra 2: ${App.getEficienciaM2()}")
-        val lIG = SLabel(64, 288, 600, 28, "Inflación general: ${App.getInflacion()}")
-        val lIP = SLabel(64, 320, 600, 28, "Porcentaje en impuestos por producto vendido: ${App.getPorcentajeImpuesto()}")
+        val lPP = SLabel(64, 96, 600, 28, "Precio de venta de producto conforme: ${App.getPrecioProducto()}")
+        val lCCO1 = SLabel(64, 128, 600, 28, "Costo de operación 1: ${App.getCostoOp1()} por minuto")
+        val lCCO2 = SLabel(64, 160, 600, 28, "Costo de operación 2: ${App.getCostoOp2()} por minuto")
+        val lCCM1 = SLabel(64, 192, 600, 28, "Costo de muestra 1: ${App.getCostoM1()} por unidad")
+        val lCCM2 = SLabel(64, 224, 600, 28, "Costo de muestra 2: ${App.getCostoM2()} por minuto")
+        val lCTA = SLabel(64, 256, 600, 28, "Costo de taller: ${App.getCostoT()} por minuto")
+        val lCF = SLabel(64, 288, 600, 28, "Costos fijos: ${App.getCostosFijo()}")
+        val lEM1 = SLabel(64, 320, 600, 28, "Eficiencia de muestra 1: ${App.getEficienciaM1()}")
+        val lEM2 = SLabel(64, 352, 600, 28, "Eficiencia de muestra 2: ${App.getEficienciaM2()}")
+        val lIG = SLabel(64, 384, 600, 28, "Inflación general: ${App.getInflacion()}")
+        val lIP = SLabel(64, 416, 600, 28, "Porcentaje en impuestos por producto vendido: ${App.getPorcentajeImpuesto()}")
 
-        val lDS = SLabel(32, 384, 600, 32, "Datos:", WSFS)
-        val lCS = SLabel(64, 416, 600, 28, "Clientes satisfechos: ${App.getSatisfechos()} de ${App.getClientes()}")
-        val lCRE = SLabel(64, 448, 600, 28, "Cantidad de reclamos: ${App.getReclamos()}")
-        val lCPP = SLabel(64, 480, 600, 28, "Costo promedio por producto: ${App.getCostoPromedio()}")
-        val lT11 = SLabel(64, 512, 600, 28, "Tiempo promedio por producto: ${App.getTiempoPromedio()} minutos")
+        val lDS = SLabel(32, 480, 600, 32, "Datos:", WSFS)
+        val lCS = SLabel(64, 512, 600, 28, "Clientes satisfechos: ${App.getSatisfechos()} de ${App.getClientes()}")
+        val lCRE = SLabel(64, 544, 600, 28, "Cantidad de reclamos: ${App.getReclamos()}")
+        val lCPP = SLabel(64, 576, 600, 28, "Costo promedio por producto: ${App.getCostoPromedio()}")
+        val lT11 = SLabel(64, 608, 600, 28, "Tiempo promedio por producto: ${App.getTiempoPromedio()} minutos")
 
-        val lC = SLabel(32, 576, 600, 32, "Costos:", WSFS)
-        val lCPBN = SLabel(64, 608, 600, 28, "Costos por pérdida del buen nombre: ${App.getCostosPBN()}")
-        val lCR = SLabel(64, 640, 600, 28, "Costos por reclamos: ${App.getCostosReclamo()}")
-        val lCI = SLabel(64, 672, 600, 28, "Costos de impuestos: ${App.getCostosImpuesto()}")
-        val lCO1 = SLabel(64, 736, 600, 28, "Costos de operación 1: ${App.getCostosOp1()}")
-        val lCM1 = SLabel(64, 768, 600, 28, "Costos de muestra 1: ${App.getCostosMuestra1()}")
-        val lCO2 = SLabel(64, 800, 600, 28, "Costos de operación 2: ${App.getCostosOp2()}")
-        val lCM2 = SLabel(64, 832, 600, 28, "Costos de muestra 2: ${App.getCostosM2()}")
-        val lCT = SLabel(64, 864, 600, 28, "Costos de taller: ${App.getCostosTaller()}")
-        val lCV = SLabel(64, 896, 600, 28, "Costos variables: ${App.getCostosVariable()}")
+        val lC = SLabel(32, 672, 600, 32, "Costos:", WSFS)
+        val lCPBN = SLabel(64, 704, 600, 28, "Costos por pérdida del buen nombre: ${App.getCostosPBN()}")
+        val lCR = SLabel(64, 736, 600, 28, "Costos por reclamos: ${App.getCostosReclamo()}")
+        val lCI = SLabel(64, 768, 600, 28, "Costos de impuestos: ${App.getCostosImpuesto()}")
+        val lCO1 = SLabel(64, 800, 600, 28, "Costos de operación 1: ${App.getCostosOp1()}")
+        val lCM1 = SLabel(64, 832, 600, 28, "Costos de muestra 1: ${App.getCostosMuestra1()}")
+        val lCO2 = SLabel(64, 864, 600, 28, "Costos de operación 2: ${App.getCostosOp2()}")
+        val lCM2 = SLabel(64, 896, 600, 28, "Costos de muestra 2: ${App.getCostosM2()}")
+        val lCT = SLabel(64, 928, 600, 28, "Costos de taller: ${App.getCostosTaller()}")
+        val lCV = SLabel(64, 960, 600, 28, "Costos variables: ${App.getCostosVariable()}")
 
-        val lEF = SLabel(32, 960, 600, 32, "Estados finales de productos:", WSFS)
-        val lE1 = SLabel(64, 992, 600, 28, "Productos desechos: ${App.getCantidadProductos("D")}")
-        val lE2 = SLabel(64, 1024, 600, 28, "Productos conformes: ${App.getCantidadProductos("PC")}")
-        val lE3 = SLabel(64, 1056, 600, 28, "Productos que requieren re-proceso: ${
+        val lEF = SLabel(32, 1024, 600, 32, "Estados finales de productos:", WSFS)
+        val lE1 = SLabel(64, 1056, 600, 28, "Productos desechos: ${App.getCantidadProductos("D")}")
+        val lE2 = SLabel(64, 1088, 600, 28, "Productos conformes: ${App.getCantidadProductos("PC")}")
+        val lE3 = SLabel(64, 1120, 600, 28, "Productos que requieren re-proceso: ${
             App.getCantidadProductos("R2") + App.getCantidadProductos("R1")}")
-        val lE4 = SLabel(64, 1088, 600, 28, "Productos que requieren reparación: ${App.getCantidadProductos("RP")}")
-        val lE5 = SLabel(64, 1120, 600, 28, "Productos de re-clasificación: ${App.getCantidadProductos("RC")}")
-        val lE6 = SLabel(64, 1152, 600, 28, "Productos de pre-venta: ${App.getCantidadProductos("PV")}")
+        val lE4 = SLabel(64, 1152, 600, 28, "Productos que requieren reparación: ${App.getCantidadProductos("RP")}")
+        val lE5 = SLabel(64, 1184, 600, 28, "Productos de re-clasificación: ${App.getCantidadProductos("RC")}")
+        val lE6 = SLabel(64, 1216, 600, 28, "Productos de pre-venta: ${App.getCantidadProductos("PV")}")
 
-        val lT = SLabel(32, 1216, 600, 32, "Tiempos:", WSFS)
-        val lT1 = SLabel(64, 1248, 600, 28, "Tiempo total requerido en operación 1: ${App.getTiemposOp1()} minutos")
-        val lT2 = SLabel(64, 1280, 600, 28, "Tiempo total requerido en operación 2: ${App.getTiemposOp2()} minutos")
-        val lT3 = SLabel(64, 1312, 600, 28, "Tiempo total requerido en muestra 1: ${App.getTiemposM1()} minutos")
-        val lT4 = SLabel(64, 1344, 600, 28, "Tiempo total requerido en muestra 2: ${App.getTiemposM2()} minutos")
-        val lT5 = SLabel(64, 1376, 600, 28, "Tiempo total requerido en taller: ${App.getTiemposT()} minutos")
-        val lT6 = SLabel(64, 1408, 600, 28, "Tiempo promedio por producto en operación 1: ${App.getTiempoOp1()} minutos")
-        val lT7 = SLabel(64, 1440, 600, 28, "Tiempo promedio por producto en operación 2: ${App.getTiempoOp2()} minutos")
-        val lT8 = SLabel(64, 1472, 600, 28, "Tiempo promedio por producto en muestra 1: ${App.getTiempoM1()} minutos")
-        val lT9 = SLabel(64, 1504, 600, 28, "Tiempo promedio por producto en muestra 2: ${App.getTiempoM2()} minutos")
-        val lT10 = SLabel(64, 1536, 600, 28, "Tiempo promedio por producto en el taller: ${App.getTiempoT()} minutos")
+        val lT = SLabel(32, 1280, 600, 32, "Tiempos:", WSFS)
+        val lT1 = SLabel(64, 1312, 600, 28, "Tiempo total requerido en operación 1: ${App.getTiemposOp1()} minutos")
+        val lT2 = SLabel(64, 1344, 600, 28, "Tiempo total requerido en operación 2: ${App.getTiemposOp2()} minutos")
+        val lT3 = SLabel(64, 1376, 600, 28, "Tiempo total requerido en muestra 1: ${App.getTiemposM1()} minutos")
+        val lT4 = SLabel(64, 1408, 600, 28, "Tiempo total requerido en muestra 2: ${App.getTiemposM2()} minutos")
+        val lT5 = SLabel(64, 1440, 600, 28, "Tiempo total requerido en taller: ${App.getTiemposT()} minutos")
+        val lT6 = SLabel(64, 1472, 600, 28, "Tiempo promedio por producto en operación 1: ${App.getTiempoOp1()} minutos")
+        val lT7 = SLabel(64, 1504, 600, 28, "Tiempo promedio por producto en operación 2: ${App.getTiempoOp2()} minutos")
+        val lT8 = SLabel(64, 1536, 600, 28, "Tiempo promedio por producto en muestra 1: ${App.getTiempoM1()} minutos")
+        val lT9 = SLabel(64, 1568, 600, 28, "Tiempo promedio por producto en muestra 2: ${App.getTiempoM2()} minutos")
+        val lT10 = SLabel(64, 1600, 600, 28, "Tiempo promedio por producto en el taller: ${App.getTiempoT()} minutos")
 
-        val lAR = SLabel(32, 1600, 600, 32, "Análisis de riesgo:", WSFS)
-        val lCN = SLabel(64, 1632, 600, 28, "Capital necesario: ${App.getCapitalNecesario()}")
-        val lI = SLabel(64, 1664, 600, 28, "Ingresos antes de impuestos: ${App.getPreIngresos()}")
-        val lID = SLabel(64, 1696, 600, 28, "Ingresos después de impuestos: ${App.getPosIngresos()}")
+        val lAR = SLabel(32, 1664, 600, 32, "Análisis de riesgo:", WSFS)
+        val lCN = SLabel(64, 1696, 600, 28, "Capital necesario: ${App.getCapitalNecesario()}")
+        val lI = SLabel(64, 1728, 600, 28, "Ingresos antes de impuestos: ${App.getPreIngresos()}")
+        val lID = SLabel(64, 1760, 600, 28, "Ingresos después de impuestos: ${App.getPosIngresos()}")
 
         //los muestra
         pInformacion.add(lVD)
@@ -838,6 +842,77 @@ object App {
 
     fun getCostoT(): String {
         return toCOP(costoTaller)
+    }
+
+    fun optimizar() {
+        var eficienciaM1Optimo = 0.0
+        var ingresoEsperadoMáximo = 0.0
+        var contador = 0.0
+
+        //eficienciaM1
+        while (contador <= 1.0) {
+            eficienciaM1 = contador
+            val esperanza = ingresoDespuesDeImpuestosEsperado()
+            if (esperanza > ingresoEsperadoMáximo) {
+                ingresoEsperadoMáximo = esperanza
+                eficienciaM1Optimo = contador
+            }
+            contador += 0.01
+        }
+        eficienciaM1 = eficienciaM1Optimo
+
+        //eficienciaM2
+        var eficienciaM2Optimo = 0.0
+        contador = 0.0
+        while (contador <= 1.0) {
+            eficienciaM2 = contador
+            val esperanza = ingresoDespuesDeImpuestosEsperado()
+            if (esperanza > ingresoEsperadoMáximo) {
+                ingresoEsperadoMáximo = esperanza
+                eficienciaM2Optimo = contador
+            }
+            contador += 0.01
+        }
+        eficienciaM2 = eficienciaM2Optimo
+
+        //optimizar cantidadProductos
+        var cantidadProductosOptimo = 0
+        for (i in 0 .. 600) {
+            cantidadProductos = i*5
+            val esperanza = ingresoDespuesDeImpuestosEsperado()
+            if (esperanza > ingresoEsperadoMáximo) {
+                ingresoEsperadoMáximo = esperanza
+                cantidadProductosOptimo = i*5
+            }
+        }
+        cantidadProductos = cantidadProductosOptimo
+
+        simular(RECREAR)
+
+        JOptionPane.showMessageDialog(null, "EficienciaM1Optimo: $eficienciaM1Optimo\n" +
+                "EficienciaM2Optimo: $eficienciaM2Optimo\n" +
+                "CantidadProductosOptimo: $cantidadProductosOptimo")
+    }
+
+    fun ingresoDespuesDeImpuestosEsperado(): Double {
+        var min: Double? = null
+        var max: Double? = null
+        var acumulado = 0.0
+        var cantidad = 0
+
+        for(i in 0 until 1000) {
+            simular(RECREAR)
+            val ingreso = getIngresosFinales()
+            if(min == null || ingreso < min) {
+                min = ingreso
+            }
+            if(max == null || ingreso > max) {
+                max = ingreso
+            }
+            acumulado += ingreso
+            cantidad++
+        }
+        return acumulado/cantidad
     }
 }
 
