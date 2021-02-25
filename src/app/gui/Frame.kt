@@ -524,9 +524,9 @@ object App {
             else {
                 operacion2(producto)
             }
+            //calcula tiempos
+            producto.tiempoM2 += 3.7 + Random.nextDouble()*(9.9-3.7)
         }
-        //calcula tiempos
-        producto.tiempoM2 += 3.7 + Random.nextDouble()*(9.9-3.7)
     }
 
     private fun cliente (producto: Producto) {
@@ -759,9 +759,16 @@ object App {
     }
 
     fun getTiempoM1(): String {
-        val cantidad = costoMuestra1/costoM1
-        return if (cantidad != 0.0)
-            "%.2f".format(tiemposMuestra1/(costoMuestra1/costoM1))
+        var tiempo = 0.0
+        var cantidad = 0
+        for (i in productos) {
+            if(i.tiempoM1 > 0) {
+                tiempo += i.tiempoM1
+                cantidad ++
+            }
+        }
+        return if (cantidad != 0)
+            "%.2f".format(tiempo/cantidad)
         else
             "NO APLICA"
     }
